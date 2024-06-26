@@ -15,13 +15,13 @@ fi
 # Execute the appropriate command based on the argument
 case "$1" in
     build)
-        docker-compose build --no-cache --force-rm
+        docker compose build --no-cache --force-rm
         ;;
     stop)
-        docker-compose stop
+        docker compose stop
         ;;
     up)
-        docker-compose up -d
+        docker compose up -d
         ;;
     install)
         docker cp . laravel-docker:/var/www/html
@@ -30,7 +30,11 @@ case "$1" in
 
         ;;
     composer-install)
+        docker exec laravel-docker bash -c "cp .env.example .env"
+        docker exec laravel-docker bash -c "php artisan key:generate"
         docker exec laravel-docker bash -c "composer install"
+        docker exec laravel-docker bash -c "npm run dev"
+        
         ;;
     data)
         docker exec laravel-docker bash -c "php artisan migrate"
